@@ -726,3 +726,827 @@ MODULES = {
         ],
     },
 }
+
+# ------------------------------------------------------------------------------
+# Exemplos Práticos Detalhados — Problema, Esqueleto e Solução Explicada
+# ------------------------------------------------------------------------------
+# Cada exemplo é um dicionário com a seguinte estrutura:
+# {
+#   "id": str                 -> identificador único
+#   "title": str              -> título do exemplo (ex.: "Two Sum")
+#   "pillar": str             -> pilar/tema coberto
+#   "context": str            -> enunciado e contexto do problema
+#   "skeleton_code": str      -> código incompleto para o usuário tentar resolver
+#   "reasoning_prompt": str   -> pergunta que guia o raciocínio antes de ver a solução
+#   "solution_code": str      -> código resolvido
+#   "explanation": str        -> explicação de por que a solução funciona
+#   "why_concept": str        -> justificativa de por que usar esse conceito/estrutura
+# }
+PRACTICAL_EXAMPLES = [
+    {
+        "id": "example_two_sum",
+        "title": "Two Sum",
+        "pillar": "🔑 Hash Tables & Arrays",
+        "context": (
+            "Dado um array de inteiros `nums` e um inteiro `target`, retorne os índices "
+            "`i` e `j` tais que `nums[i] + nums[j] == target` e `i != j`."
+        ),
+        "skeleton_code": (
+            "class Solution:\n"
+            "    def twoSum(self, nums: List[int], target: int) -> List[int]:\n"
+            "        # Escreva sua lógica aqui usando um dicionário (hash map)\n"
+            "        # para otimizar a busca\n"
+            "        pass"
+        ),
+        "reasoning_prompt": (
+            "Antes de ver a solução, pense: qual estrutura de dados permite verificar em "
+            "O(1) se o complemento de um número (target - nums[i]) já foi visto? Como você "
+            "evitaria o loop duplo O(N²) da força bruta?"
+        ),
+        "solution_code": (
+            "class Solution:\n"
+            "    def twoSum(self, nums: List[int], target: int) -> List[int]:\n"
+            "        prevMap = {}  # Mapeia valor -> índice (val -> index)\n"
+            "\n"
+            "        for i, n in enumerate(nums):\n"
+            "            diff = target - n  # Calcula o complemento necessário\n"
+            "            if diff in prevMap:\n"
+            "                return [prevMap[diff], i]  # Retorna índice do complemento e o atual\n"
+            "            prevMap[n] = i  # Armazena o número atual no mapa\n"
+            "        return []"
+        ),
+        "explanation": (
+            "A cada iteração, calculamos o complemento (`diff = target - n`) e verificamos "
+            "se ele já foi visto antes, consultando o dicionário `prevMap`. Se sim, "
+            "encontramos o par e retornamos os dois índices. Caso contrário, guardamos o "
+            "número atual no dicionário para que futuras iterações possam encontrá-lo."
+        ),
+        "why_concept": (
+            "O uso do Hash Map reduz a complexidade temporal de O(N²) (força bruta com dois "
+            "loops) para O(N), pois a inserção e a busca no dicionário custam O(1) em média."
+        ),
+        "big_o": "Força bruta: O(N²) tempo. Com hash map: O(N) tempo, O(N) espaço.",
+    },
+    {
+        "id": "example_valid_parentheses",
+        "title": "Valid Parentheses",
+        "pillar": "📚 Stacks",
+        "context": (
+            "Dada uma string `s` contendo caracteres de parênteses, colchetes e chaves, "
+            "determine se a string é válida, garantindo que os pares abram e fechem na "
+            "ordem correta."
+        ),
+        "skeleton_code": (
+            "class Solution:\n"
+            "    def isValid(self, s: str) -> bool:\n"
+            "        # Utilize uma pilha (stack) e um dicionário de mapeamento\n"
+            "        # de fechamento -> abertura\n"
+            "        pass"
+        ),
+        "reasoning_prompt": (
+            "Antes de ver a solução, pense: qual estrutura de dados segue o comportamento "
+            "LIFO (último a entrar, primeiro a sair)? Como você decidiria, ao encontrar um "
+            "caractere de fechamento, se ele corresponde à última abertura pendente?"
+        ),
+        "solution_code": (
+            "class Solution:\n"
+            "    def isValid(self, s: str) -> bool:\n"
+            "        stack = []\n"
+            "        closeToOpen = { \")\" : \"(\", \"]\" : \"[\", \"}\" : \"{\" }  # fechamento -> abertura\n"
+            "\n"
+            "        for c in s:\n"
+            "            if c in closeToOpen:\n"
+            "                # Verifica se a pilha não está vazia e o topo corresponde ao par\n"
+            "                if stack and stack[-1] == closeToOpen[c]:\n"
+            "                    stack.pop()\n"
+            "                else:\n"
+            "                    return False\n"
+            "            else:\n"
+            "                stack.append(c)  # Empilha caracteres de abertura\n"
+            "\n"
+            "        return True if not stack else False  # Pilha vazia = tudo fechou corretamente"
+        ),
+        "explanation": (
+            "Percorremos a string caractere a caractere. Ao encontrar um caractere de "
+            "abertura, empilhamos. Ao encontrar um de fechamento, comparamos com o topo da "
+            "pilha: se corresponder ao par de abertura esperado, desempilhamos; caso "
+            "contrário, a string é inválida. No final, a string só é válida se a pilha "
+            "estiver completamente vazia (todas as aberturas foram fechadas)."
+        ),
+        "why_concept": (
+            "O comportamento LIFO (Last In, First Out) da Pilha (Stack) é perfeito para "
+            "gerenciar estruturas aninhadas, onde o elemento de abertura mais recente deve "
+            "ser o primeiro a ser fechado."
+        ),
+        "big_o": "O(N) tempo, O(N) espaço no pior caso (string só com caracteres de abertura).",
+    },
+    {
+        "id": "example_number_of_islands",
+        "title": "Number of Islands",
+        "pillar": "🌐 Grafos / DFS",
+        "context": (
+            "Dada uma grade 2D de `'1'`s (terra) e `'0'`s (água), conte e retorne o número "
+            "de ilhas formadas por conexões horizontais ou verticais."
+        ),
+        "skeleton_code": (
+            "class Solution:\n"
+            "    def numIslands(self, grid: List[List[str]]) -> int:\n"
+            "        # Implemente a travessia por DFS para \"afundar\" a ilha visitada\n"
+            "        pass"
+        ),
+        "reasoning_prompt": (
+            "Antes de ver a solução, pense: como você evitaria contar a mesma ilha mais de "
+            "uma vez? Qual seria a condição de parada da sua busca em profundidade (DFS) ao "
+            "explorar uma célula de terra?"
+        ),
+        "solution_code": (
+            "class Solution:\n"
+            "    def numIslands(self, grid: List[List[str]]) -> int:\n"
+            "        directions = [[1, 0], [-1, 0], [0, 1], [0, -1]]\n"
+            "        ROWS, COLS = len(grid), len(grid[0])\n"
+            "        islands = 0\n"
+            "\n"
+            "        def dfs(r, c):\n"
+            "            # Condição de parada: fora dos limites ou se for água ('0')\n"
+            "            if r < 0 or c < 0 or r >= ROWS or c >= COLS or grid[r][c] == \"0\":\n"
+            "                return\n"
+            "\n"
+            "            grid[r][c] = \"0\"  # Marca a célula atual como visitada (afunda a terra)\n"
+            "            for dr, dc in directions:\n"
+            "                dfs(r + dr, c + dc)  # Explora recursivamente as 4 direções\n"
+            "\n"
+            "        for r in range(ROWS):\n"
+            "            for c in range(COLS):\n"
+            "                if grid[r][c] == \"1\":\n"
+            "                    dfs(r, c)  # Inicia a varredura da ilha\n"
+            "                    islands += 1  # Incrementa o contador de ilhas\n"
+            "\n"
+            "        return islands"
+        ),
+        "explanation": (
+            "Percorremos cada célula da grade. Ao encontrar terra (`'1'`) ainda não "
+            "visitada, iniciamos uma DFS que marca toda a ilha conectada como água "
+            "(`'0'`), evitando contagem duplicada, e incrementamos o contador de ilhas. "
+            "A DFS para quando sai dos limites da grade ou encontra água."
+        ),
+        "why_concept": (
+            "A Busca em Profundidade (DFS) combinada com a marcação in-place "
+            "(`grid[r][c] = \"0\"`) garante que cada célula seja visitada de forma "
+            "eficiente, sem entrar em loops infinitos por ciclos no grafo."
+        ),
+        "big_o": "O(R × C) tempo (cada célula visitada uma vez), O(R × C) espaço no pior caso (pilha de recursão).",
+    },
+    # --------------------------------------------------------------------
+    # Cenários de Entrevista (simulação de raciocínio em voz alta)
+    # --------------------------------------------------------------------
+    # Além dos campos padrão, estes itens incluem:
+    #   "clarifying_questions": list[str]  -> perguntas a fazer ao entrevistador
+    #   "reasoning_script": str            -> script de raciocínio em 1ª pessoa,
+    #                                          revelado junto com a solução
+    {
+        "id": "scenario_contains_duplicate",
+        "title": "Otimização de Busca em Vetores (Contains Duplicate)",
+        "pillar": "🔑 Hash Tables & Arrays",
+        "context": (
+            "O entrevistador pede para verificar se existem elementos duplicados em um "
+            "array grande."
+        ),
+        "clarifying_questions": [
+            "Os dados de entrada estão ordenados de alguma forma?",
+            "Quais são as restrições de tamanho (constraints) do array e os limites de "
+            "memória da aplicação?",
+        ],
+        "skeleton_code": (
+            "class Solution:\n"
+            "    def containsDuplicate(self, nums: List[int]) -> bool:\n"
+            "        # Utilize um Hash Set para verificar duplicatas em O(1) por elemento\n"
+            "        pass"
+        ),
+        "reasoning_prompt": (
+            "Antes de ver a solução, pense: como você evitaria o loop duplo O(N²) da "
+            "força bruta? Qual estrutura permite checar em O(1) se um valor já foi visto?"
+        ),
+        "solution_code": (
+            "class Solution:\n"
+            "    def containsDuplicate(self, nums: List[int]) -> bool:\n"
+            "        seen = set()\n"
+            "\n"
+            "        for n in nums:\n"
+            "            if n in seen:\n"
+            "                return True  # Já vimos esse número antes\n"
+            "            seen.add(n)\n"
+            "\n"
+            "        return False"
+        ),
+        "reasoning_script": (
+            "\"A abordagem mais intuitiva seria usar dois loops aninhados para comparar "
+            "cada elemento com os demais, mas isso resultaria em uma complexidade de tempo "
+            "de O(N²), o que é ineficiente para grandes volumes de dados. Para otimizar "
+            "isso para O(N), vou utilizar um Hash Set em Python. A ideia é iterar pela "
+            "lista apenas uma vez: enquanto percorro, checo se o elemento atual já existe "
+            "no nosso conjunto. Como as operações de inserção e busca em um Hash Set custam "
+            "O(1) em média, conseguimos reduzir drasticamente o tempo de execução, pagando "
+            "o trade-off de consumir O(N) de espaço extra na memória.\""
+        ),
+        "explanation": (
+            "Percorremos o array uma única vez, guardando cada número em um `set`. Se um "
+            "número já estiver no conjunto antes de ser adicionado, encontramos uma "
+            "duplicata e retornamos `True` imediatamente."
+        ),
+        "why_concept": (
+            "O Hash Set oferece inserção e busca O(1) em média, trocando espaço extra "
+            "(O(N)) por uma redução de tempo de O(N²) para O(N) — um trade-off clássico "
+            "de entrevistas técnicas."
+        ),
+        "big_o": "Força bruta: O(N²) tempo, O(1) espaço. Com hash set: O(N) tempo, O(N) espaço.",
+    },
+    {
+        "id": "scenario_group_anagrams",
+        "title": "Escolha de Chaves Imutáveis para Agrupamento (Group Anagrams)",
+        "pillar": "🔑 Hash Tables & Arrays",
+        "context": (
+            "Agrupar itens com características semelhantes (palavras anagramas) "
+            "utilizando mapas."
+        ),
+        "clarifying_questions": [
+            "As strings contêm apenas letras minúsculas do alfabeto inglês ou podem "
+            "incluir caracteres especiais, maiúsculas e acentos?",
+        ],
+        "skeleton_code": (
+            "class Solution:\n"
+            "    def groupAnagrams(self, strs: List[str]) -> List[List[str]]:\n"
+            "        # Utilize uma chave 'hashable' derivada de cada string\n"
+            "        # (ex.: tupla de contagem de letras) para agrupar anagramas\n"
+            "        pass"
+        ),
+        "reasoning_prompt": (
+            "Antes de ver a solução, pense: por que não podemos usar listas como chave "
+            "de dicionário? Que chave 'hashable' representaria unicamente um anagrama sem "
+            "custar O(K log K) de ordenação?"
+        ),
+        "solution_code": (
+            "class Solution:\n"
+            "    def groupAnagrams(self, strs: List[str]) -> List[List[str]]:\n"
+            "        groups = collections.defaultdict(list)\n"
+            "\n"
+            "        for s in strs:\n"
+            "            count = [0] * 26  # Frequência de cada letra (a-z)\n"
+            "            for c in s:\n"
+            "                count[ord(c) - ord(\"a\")] += 1\n"
+            "\n"
+            "            groups[tuple(count)].append(s)  # Tupla é hashable -> vira chave\n"
+            "\n"
+            "        return list(groups.values())"
+        ),
+        "reasoning_script": (
+            "\"Para agrupar os anagramas eficientemente, preciso de uma Hash Table onde a "
+            "chave seja a assinatura comum do anagrama e o valor seja a lista de strings "
+            "correspondentes. Em Python, não podemos usar listas mutáveis como chaves de "
+            "dicionário porque elas não são 'hashable'. Portanto, tenho duas opções de "
+            "chave: ordenar os caracteres da string (o que custa O(K log K) por palavra) "
+            "ou criar uma tupla de frequência de 26 posições. Vou optar pela tupla de "
+            "frequências, pois garante uma operação linear O(K) sem depender de "
+            "ordenação pesada.\""
+        ),
+        "explanation": (
+            "Para cada string, calculamos um vetor de 26 posições com a contagem de cada "
+            "letra e convertemos em `tuple` (que é hashable). Strings com a mesma "
+            "assinatura de frequência são anagramas e caem na mesma chave do "
+            "`defaultdict`."
+        ),
+        "why_concept": (
+            "Usar a tupla de frequências evita o custo de ordenação O(K log K) por string, "
+            "reduzindo para O(K), além de resolver o problema de 'hashability' de chaves "
+            "mutáveis."
+        ),
+        "big_o": "O(N × K) tempo, onde N é o número de strings e K o comprimento médio; O(N × K) espaço.",
+    },
+    {
+        "id": "scenario_longest_consecutive_sequence",
+        "title": "Busca de Sequências Contínuas em O(N) (Longest Consecutive Sequence)",
+        "pillar": "🔑 Hash Tables & Arrays",
+        "context": (
+            "Encontrar a maior sequência numérica consecutiva em um array desordenado "
+            "sem poder ordenar previamente via O(N log N)."
+        ),
+        "clarifying_questions": [
+            "O array pode conter elementos duplicados ou valores negativos?",
+            "Existe restrição rígida para que a solução execute estritamente em O(N) de "
+            "tempo?",
+        ],
+        "skeleton_code": (
+            "class Solution:\n"
+            "    def longestConsecutive(self, nums: List[int]) -> int:\n"
+            "        # Converta para um set e identifique apenas os números que são\n"
+            "        # 'início' de sequência (ou seja, num - 1 não está no set)\n"
+            "        pass"
+        ),
+        "reasoning_prompt": (
+            "Antes de ver a solução, pense: como identificar, em O(1), se um número é o "
+            "início de uma sequência? Como evitar recontar a mesma sequência várias vezes?"
+        ),
+        "solution_code": (
+            "class Solution:\n"
+            "    def longestConsecutive(self, nums: List[int]) -> int:\n"
+            "        numSet = set(nums)\n"
+            "        longest = 0\n"
+            "\n"
+            "        for n in numSet:\n"
+            "            # Só inicia a contagem se 'n' for o começo de uma sequência\n"
+            "            if (n - 1) not in numSet:\n"
+            "                length = 1\n"
+            "                while (n + length) in numSet:\n"
+            "                    length += 1\n"
+            "                longest = max(longest, length)\n"
+            "\n"
+            "        return longest"
+        ),
+        "reasoning_script": (
+            "\"Se ordenarmos o array, resolveríamos em O(N log N), mas o problema exige "
+            "O(N). Para atingir essa eficiência, vou primeiro converter o array em um Hash "
+            "Set para eliminar duplicados e permitir buscas em O(1). O pulo do gato aqui "
+            "para evitar loops redundantes é verificar, para cada número, se o seu "
+            "antecessor (num - 1) existe no conjunto. Se existir, este número não é o "
+            "início de uma sequência, então eu o ignoro. Só começo a contar quando "
+            "encontro um número que é genuinamente o início. Isso garante que cada "
+            "sequência seja percorrida apenas uma vez, mantendo O(N).\""
+        ),
+        "explanation": (
+            "Ao só iniciar a contagem em números sem antecessor no set, cada sequência é "
+            "percorrida exatamente uma vez no total (mesmo que o loop externo passe por "
+            "todos os números), mantendo a complexidade amortizada em O(N)."
+        ),
+        "why_concept": (
+            "O Hash Set permite checar a existência do antecessor em O(1), eliminando a "
+            "necessidade de ordenação e evitando contagens redundantes de sequências já "
+            "visitadas."
+        ),
+        "big_o": "O(N) tempo (amortizado), O(N) espaço para o set.",
+    },
+    {
+        "id": "scenario_linked_list_cycle",
+        "title": "Manipulação de Ponteiros e Detecção de Ciclos (Linked List Cycle)",
+        "pillar": "🔗 Linked Lists",
+        "context": (
+            "Identificar se uma lista encadeada possui um loop interno sem corromper a "
+            "estrutura e sem gastar memória excessiva."
+        ),
+        "clarifying_questions": [
+            "Podemos modificar os nós da lista encadeada durante a verificação, ou a "
+            "estrutura deve permanecer imutável?",
+            "Qual é o comportamento esperado se a lista estiver vazia?",
+        ],
+        "skeleton_code": (
+            "class Solution:\n"
+            "    def hasCycle(self, head: Optional[ListNode]) -> bool:\n"
+            "        # Implemente o algoritmo de Floyd (dois ponteiros: slow e fast)\n"
+            "        # para detectar ciclo em O(1) de espaço\n"
+            "        pass"
+        ),
+        "reasoning_prompt": (
+            "Antes de ver a solução, pense: como dois ponteiros com velocidades "
+            "diferentes podem se encontrar se (e somente se) houver um ciclo?"
+        ),
+        "solution_code": (
+            "class Solution:\n"
+            "    def hasCycle(self, head: Optional[ListNode]) -> bool:\n"
+            "        slow, fast = head, head\n"
+            "\n"
+            "        while fast and fast.next:\n"
+            "            slow = slow.next            # Avança 1 passo\n"
+            "            fast = fast.next.next        # Avança 2 passos\n"
+            "            if slow == fast:\n"
+            "                return True  # Os ponteiros se encontraram -> há ciclo\n"
+            "\n"
+            "        return False  # 'fast' chegou ao final -> não há ciclo"
+        ),
+        "reasoning_script": (
+            "\"Uma abordagem simples seria usar um Hash Set para armazenar os nós "
+            "visitados, mas isso consumiria O(N) de espaço adicional. Para otimizar o "
+            "espaço para O(1), vou aplicar o algoritmo dos dois ponteiros de Floyd, "
+            "conhecido como 'Tortoise and Hare'. Inicializarei um ponteiro slow que avança "
+            "1 passo por vez e um ponteiro fast que avança 2 passos por vez. Se houver um "
+            "ciclo, em algum momento o ponteiro rápido alcançará o lento dentro do loop. "
+            "Se o ponteiro rápido chegar a null, a lista termina e não há ciclos. Essa "
+            "abordagem nos dá tempo O(N) com espaço constante O(1).\""
+        ),
+        "explanation": (
+            "`slow` avança um nó por vez e `fast` avança dois. Se existir um ciclo, "
+            "`fast` eventualmente 'dá a volta' dentro do loop e encontra `slow`. Se não "
+            "houver ciclo, `fast` chega a `None` antes de qualquer encontro."
+        ),
+        "why_concept": (
+            "O algoritmo de Floyd resolve o problema com espaço O(1), eliminando a "
+            "necessidade de um Hash Set O(N) para rastrear nós visitados."
+        ),
+        "big_o": "O(N) tempo, O(1) espaço.",
+    },
+    {
+        "id": "scenario_valid_parentheses_interview",
+        "title": "Validação de Sinais Aninhados com Pilhas (Valid Parentheses)",
+        "pillar": "📚 Stacks",
+        "context": (
+            "Validar a correta abertura e fechamento de chaves, colchetes e parênteses "
+            "em uma string."
+        ),
+        "clarifying_questions": [
+            "A string de entrada pode conter caracteres além dos delimitadores (como "
+            "letras ou espaços) que devam ser ignorados?",
+        ],
+        "skeleton_code": (
+            "class Solution:\n"
+            "    def isValid(self, s: str) -> bool:\n"
+            "        # Utilize uma pilha (stack) e um dicionário de mapeamento\n"
+            "        # de fechamento -> abertura\n"
+            "        pass"
+        ),
+        "reasoning_prompt": (
+            "Antes de ver a solução, pense em voz alta como se estivesse explicando ao "
+            "entrevistador: por que uma Pilha (LIFO) resolve naturalmente esse problema?"
+        ),
+        "solution_code": (
+            "class Solution:\n"
+            "    def isValid(self, s: str) -> bool:\n"
+            "        stack = []\n"
+            "        closeToOpen = { \")\" : \"(\", \"]\" : \"[\", \"}\" : \"{\" }\n"
+            "\n"
+            "        for c in s:\n"
+            "            if c in closeToOpen:\n"
+            "                if stack and stack[-1] == closeToOpen[c]:\n"
+            "                    stack.pop()\n"
+            "                else:\n"
+            "                    return False\n"
+            "            else:\n"
+            "                stack.append(c)\n"
+            "\n"
+            "        return True if not stack else False"
+        ),
+        "reasoning_script": (
+            "\"Como estamos lidando com estruturas aninhadas onde o elemento aberto mais "
+            "recentemente deve ser o primeiro a ser fechado, o padrão ideal é o LIFO (Last "
+            "In, First Out), ou seja, uma Pilha. Vou iterar pela string: quando encontrar "
+            "um caractere de abertura, faço um append na pilha. Quando encontrar um "
+            "caractere de fechamento, verifico se a pilha não está vazia e se o elemento "
+            "no topo corresponde ao par correto mapeado em um dicionário. Se corresponder, "
+            "dou um pop. Se não corresponder ou se a pilha estiver vazia ao tentar fechar, "
+            "a string é inválida. No final, garanto que a pilha esteja totalmente vazia "
+            "para retornar true.\""
+        ),
+        "explanation": (
+            "A pilha guarda os caracteres de abertura pendentes. Cada fechamento deve "
+            "corresponder exatamente ao topo da pilha; qualquer divergência ou tentativa "
+            "de fechar com a pilha vazia invalida a string."
+        ),
+        "why_concept": (
+            "O comportamento LIFO da Pilha espelha exatamente a regra de aninhamento: o "
+            "último elemento aberto deve ser o primeiro a ser fechado."
+        ),
+        "big_o": "O(N) tempo, O(N) espaço no pior caso.",
+    },
+    {
+        "id": "scenario_max_depth_binary_tree",
+        "title": "Recursão vs. Iteração em Árvores (Maximum Depth of Binary Tree)",
+        "pillar": "🌳 Árvores / BST",
+        "context": "Calcular a profundidade máxima (altura) de uma árvore binária.",
+        "clarifying_questions": [
+            "A árvore pode ser desbalanceada a ponto de causar estouro de pilha (stack "
+            "overflow) na recursão devido à profundidade excessiva?",
+        ],
+        "skeleton_code": (
+            "class Solution:\n"
+            "    def maxDepth(self, root: Optional[TreeNode]) -> int:\n"
+            "        # Implemente via DFS recursiva (caso base + 1 + max(esquerda, direita))\n"
+            "        pass"
+        ),
+        "reasoning_prompt": (
+            "Antes de ver a solução, pense: qual é o caso base da recursão? E como você "
+            "resolveria o mesmo problema de forma iterativa (BFS) caso a árvore seja "
+            "muito profunda?"
+        ),
+        "solution_code": (
+            "class Solution:\n"
+            "    def maxDepth(self, root: Optional[TreeNode]) -> int:\n"
+            "        # Versão recursiva (DFS)\n"
+            "        if not root:\n"
+            "            return 0  # Caso base: árvore vazia tem profundidade 0\n"
+            "        return 1 + max(self.maxDepth(root.left), self.maxDepth(root.right))\n"
+            "\n"
+            "    def maxDepthIterativo(self, root: Optional[TreeNode]) -> int:\n"
+            "        # Alternativa iterativa (BFS) para evitar estouro de pilha\n"
+            "        if not root:\n"
+            "            return 0\n"
+            "\n"
+            "        level, queue = 0, collections.deque([root])\n"
+            "        while queue:\n"
+            "            for _ in range(len(queue)):\n"
+            "                node = queue.popleft()\n"
+            "                if node.left:\n"
+            "                    queue.append(node.left)\n"
+            "                if node.right:\n"
+            "                    queue.append(node.right)\n"
+            "            level += 1  # Incrementa ao final de cada camada percorrida\n"
+            "\n"
+            "        return level"
+        ),
+        "reasoning_script": (
+            "\"Para calcular a profundidade máxima, a solução mais limpa e elegante é usar "
+            "DFS recursiva: o caso base retorna 0 se o nó for nulo, e o passo recursivo "
+            "retorna 1 + max(maxDepth(esquerda), maxDepth(direita)). No entanto, em "
+            "ambientes de produção com árvores extremamente profundas e desbalanceadas, a "
+            "recursão pode estourar a call stack. Por isso, também posso resolver de "
+            "forma iterativa usando uma Fila com Busca em Largura (BFS), incrementando um "
+            "contador de níveis a cada camada percorrida. Ambas têm complexidade de O(N), "
+            "visitando cada nó uma vez.\""
+        ),
+        "explanation": (
+            "A versão recursiva soma 1 (o nó atual) à maior profundidade entre as "
+            "subárvores esquerda e direita. A versão iterativa usa BFS nível a nível, "
+            "incrementando o contador `level` a cada camada completa processada."
+        ),
+        "why_concept": (
+            "A recursão é mais simples de escrever, mas a BFS iterativa evita o risco de "
+            "`RecursionError` em árvores muito profundas e desbalanceadas — um trade-off "
+            "importante de mencionar em entrevista."
+        ),
+        "big_o": "O(N) tempo em ambas as versões; espaço O(H) na recursiva (altura) e O(N) no pior caso na BFS (largura máxima).",
+    },
+    {
+        "id": "scenario_valid_bst",
+        "title": "Validação de Hierarquias Rígidas em Árvores (Valid Binary Search Tree)",
+        "pillar": "🌳 Árvores / BST",
+        "context": (
+            "Garantir que uma árvore binária respeite rigorosamente as regras de uma "
+            "BST (tudo à esquerda menor que a raiz, tudo à direita maior)."
+        ),
+        "clarifying_questions": [
+            "Os valores dos nós podem conter números duplicados ou limites extremos "
+            "como float('-inf')?",
+        ],
+        "skeleton_code": (
+            "class Solution:\n"
+            "    def isValidBST(self, root: Optional[TreeNode]) -> bool:\n"
+            "        # Propague um intervalo (low, high) de limites válidos\n"
+            "        # para cada nó descendente durante a DFS\n"
+            "        pass"
+        ),
+        "reasoning_prompt": (
+            "Antes de ver a solução, pense: por que checar apenas os filhos diretos de "
+            "cada nó não é suficiente? Como propagar limites válidos ao longo da recursão?"
+        ),
+        "solution_code": (
+            "class Solution:\n"
+            "    def isValidBST(self, root: Optional[TreeNode]) -> bool:\n"
+            "        def valid(node, low, high):\n"
+            "            if not node:\n"
+            "                return True  # Árvore vazia é válida por definição\n"
+            "\n"
+            "            if not (low < node.val < high):\n"
+            "                return False  # Violou o intervalo permitido\n"
+            "\n"
+            "            # Ao ir para a esquerda, 'high' vira o valor do nó atual\n"
+            "            # Ao ir para a direita, 'low' vira o valor do nó atual\n"
+            "            return valid(node.left, low, node.val) and valid(node.right, node.val, high)\n"
+            "\n"
+            "        return valid(root, float(\"-inf\"), float(\"inf\"))"
+        ),
+        "reasoning_script": (
+            "\"Um erro comum é checar apenas os filhos diretos de cada nó. Isso falharia "
+            "se um nó na subárvore esquerda violasse a raiz principal mais acima. Para "
+            "evitar isso, não basta checar os filhos imediatos; precisamos propagar um "
+            "intervalo de limites válidos (min e max) para cada descendente. Ao ir para a "
+            "esquerda, o limite superior passa a ser o valor do nó atual. Ao ir para a "
+            "direita, o limite inferior passa a ser o valor do nó atual. Usando essa DFS "
+            "com validação de limites estritos, garantimos a integridade da BST em O(N) "
+            "de tempo.\""
+        ),
+        "explanation": (
+            "A função `valid` recebe o intervalo `(low, high)` permitido para o valor do "
+            "nó atual. A cada chamada recursiva, esse intervalo é restringido conforme "
+            "descemos para a esquerda ou direita, garantindo que a regra da BST valha "
+            "para toda a árvore, não só localmente."
+        ),
+        "why_concept": (
+            "Propagar limites (`low`, `high`) via DFS captura violações 'distantes' na "
+            "árvore que uma checagem apenas local (comparando só com o pai imediato) não "
+            "detectaria."
+        ),
+        "big_o": "O(N) tempo (visita cada nó uma vez), O(H) espaço de recursão (H = altura da árvore).",
+    },
+    {
+        "id": "scenario_number_of_islands_interview",
+        "title": "Travessia de Matrizes e Prevenção de Loops em Grafos (Number of Islands)",
+        "pillar": "🌐 Grafos / DFS",
+        "context": "Contar componentes conexos em uma matriz 2D (grade de terra e água).",
+        "clarifying_questions": [
+            "As diagonais contam como conexões ou apenas movimentos horizontais e "
+            "verticais?",
+            "Podemos modificar os dados da matriz original ('in-place') para marcar as "
+            "células visitadas e economizar memória?",
+        ],
+        "skeleton_code": (
+            "class Solution:\n"
+            "    def numIslands(self, grid: List[List[str]]) -> int:\n"
+            "        # Varra a matriz e, ao achar terra não visitada, acione uma DFS/BFS\n"
+            "        # que 'afunda' toda a ilha conectada\n"
+            "        pass"
+        ),
+        "reasoning_prompt": (
+            "Antes de ver a solução, pense: como você evitaria processar a mesma célula "
+            "mais de uma vez (e cair em loop)? Por que a marcação in-place resolve isso?"
+        ),
+        "solution_code": (
+            "class Solution:\n"
+            "    def numIslands(self, grid: List[List[str]]) -> int:\n"
+            "        if not grid:\n"
+            "            return 0\n"
+            "\n"
+            "        ROWS, COLS = len(grid), len(grid[0])\n"
+            "        islands = 0\n"
+            "\n"
+            "        def dfs(r, c):\n"
+            "            if (r < 0 or c < 0 or r >= ROWS or c >= COLS\n"
+            "                    or grid[r][c] == \"0\"):\n"
+            "                return\n"
+            "\n"
+            "            grid[r][c] = \"0\"  # Marca como visitada ('afunda' a terra)\n"
+            "            dfs(r + 1, c)\n"
+            "            dfs(r - 1, c)\n"
+            "            dfs(r, c + 1)\n"
+            "            dfs(r, c - 1)\n"
+            "\n"
+            "        for r in range(ROWS):\n"
+            "            for c in range(COLS):\n"
+            "                if grid[r][c] == \"1\":\n"
+            "                    islands += 1  # Encontrou o início de uma nova ilha\n"
+            "                    dfs(r, c)     # Afunda toda a ilha conectada\n"
+            "\n"
+            "        return islands"
+        ),
+        "reasoning_script": (
+            "\"Assumindo que apenas movimentos horizontais e verticais formam conexões, "
+            "vou varrer a matriz com dois loops. Quando encontrar um '1' (terra), sei que "
+            "achei o início de uma nova ilha, então incremento meu contador. A partir "
+            "daí, aciono uma DFS (ou BFS) para explorar todas as células vizinhas "
+            "conectadas e as 'afundo' marcando-as como '0'. Essa marcação in-place é "
+            "essencial para evitar loops infinitos, pois impede que a mesma célula seja "
+            "processada múltiplas vezes. A complexidade de tempo será O(M × N), onde M é "
+            "o número de linhas e N o de colunas.\""
+        ),
+        "explanation": (
+            "Cada célula de terra ainda não visitada dispara uma DFS que marca toda a "
+            "ilha conectada como água, impedindo que ela seja contada novamente nas "
+            "próximas iterações do loop principal."
+        ),
+        "why_concept": (
+            "A marcação in-place elimina a necessidade de uma estrutura `visited` "
+            "separada, economizando espaço extra, e garante terminação da DFS (sem "
+            "ciclos) ao 'consumir' a terra já explorada."
+        ),
+        "big_o": "O(M × N) tempo, O(M × N) espaço no pior caso (pilha de recursão em uma ilha que cobre toda a grade).",
+    },
+    {
+        "id": "scenario_rotting_oranges",
+        "title": "Simulação de Propagação de Estado com BFS (Rotting Oranges)",
+        "pillar": "🌐 Grafos / BFS",
+        "context": (
+            "Calcular o tempo mínimo necessário para que uma condição se propague por "
+            "vizinhança em uma grade (ex.: laranjas podres contaminando as frescas)."
+        ),
+        "clarifying_questions": [
+            "O que deve ser retornado se for fisicamente impossível propagar a condição "
+            "para todas as unidades?",
+        ],
+        "skeleton_code": (
+            "class Solution:\n"
+            "    def orangesRotting(self, grid: List[List[int]]) -> int:\n"
+            "        # Inicialize a BFS com TODAS as laranjas podres de uma vez\n"
+            "        # (multi-source BFS) e avance nível a nível (minuto a minuto)\n"
+            "        pass"
+        ),
+        "reasoning_prompt": (
+            "Antes de ver a solução, pense: por que a BFS deve começar de todas as "
+            "fontes 'podres' ao mesmo tempo, em vez de uma só? Como você mediria o tempo "
+            "decorrido?"
+        ),
+        "solution_code": (
+            "class Solution:\n"
+            "    def orangesRotting(self, grid: List[List[int]]) -> int:\n"
+            "        ROWS, COLS = len(grid), len(grid[0])\n"
+            "        queue = collections.deque()\n"
+            "        fresh = 0\n"
+            "\n"
+            "        # Coleta todas as laranjas podres (multi-source) e conta as frescas\n"
+            "        for r in range(ROWS):\n"
+            "            for c in range(COLS):\n"
+            "                if grid[r][c] == 2:\n"
+            "                    queue.append((r, c))\n"
+            "                elif grid[r][c] == 1:\n"
+            "                    fresh += 1\n"
+            "\n"
+            "        minutes = 0\n"
+            "        directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]\n"
+            "\n"
+            "        while queue and fresh > 0:\n"
+            "            for _ in range(len(queue)):  # Processa uma camada (1 minuto)\n"
+            "                r, c = queue.popleft()\n"
+            "                for dr, dc in directions:\n"
+            "                    nr, nc = r + dr, c + dc\n"
+            "                    if (0 <= nr < ROWS and 0 <= nc < COLS\n"
+            "                            and grid[nr][nc] == 1):\n"
+            "                        grid[nr][nc] = 2  # Apodrece a laranja vizinha\n"
+            "                        fresh -= 1\n"
+            "                        queue.append((nr, nc))\n"
+            "            minutes += 1\n"
+            "\n"
+            "        return minutes if fresh == 0 else -1"
+        ),
+        "reasoning_script": (
+            "\"Como o problema pede o menor tempo para propagar a condição camada por "
+            "camada (minuto a minuto), a abordagem correta é a Busca em Largura (BFS). Um "
+            "detalhe crítico aqui é que a BFS não deve começar de uma única fonte, mas "
+            "sim ser inicializada coletando todas as laranjas podres simultaneamente e "
+            "jogando-as na fila. Enquanto isso, conto quantas laranjas frescas existem. A "
+            "cada nível da BFS que processamos, decremento o contador de frutas frescas e "
+            "avanço o relógio em 1 minuto. Se ao final a contagem de frutas frescas for "
+            "zero, retorno o tempo acumulado; caso contrário, retorno -1.\""
+        ),
+        "explanation": (
+            "A fila começa com todas as laranjas já podres (multi-source BFS). Cada "
+            "iteração do `while` processa uma camada inteira (um minuto), apodrecendo "
+            "todas as laranjas frescas adjacentes às já podres naquele instante."
+        ),
+        "why_concept": (
+            "Multi-source BFS propaga todas as fontes 'em paralelo', garantindo que o "
+            "número de camadas processadas corresponda exatamente ao tempo mínimo "
+            "necessário — uma única BFS normal (fonte única) não modelaria a propagação "
+            "simultânea corretamente."
+        ),
+        "big_o": "O(M × N) tempo (cada célula processada uma vez), O(M × N) espaço para a fila no pior caso.",
+    },
+    {
+        "id": "scenario_find_min_rotated_sorted_array",
+        "title": "Busca Binária em Estruturas Modificadas (Find Minimum in Rotated Sorted Array)",
+        "pillar": "🔍 Busca Binária",
+        "context": (
+            "Encontrar o menor elemento em um array que estava ordenado mas sofreu "
+            "rotações desconhecidas."
+        ),
+        "clarifying_questions": [
+            "Todos os elementos do array são únicos ou existem números duplicados?",
+        ],
+        "skeleton_code": (
+            "class Solution:\n"
+            "    def findMin(self, nums: List[int]) -> int:\n"
+            "        # Implemente uma busca binária modificada: a cada passo, identifique\n"
+            "        # qual metade está ordenada e descarte a outra\n"
+            "        pass"
+        ),
+        "reasoning_prompt": (
+            "Antes de ver a solução, pense: como comparar `nums[mid]` com `nums[right]` "
+            "ajuda a decidir qual metade do array está 'perfeitamente' ordenada?"
+        ),
+        "solution_code": (
+            "class Solution:\n"
+            "    def findMin(self, nums: List[int]) -> int:\n"
+            "        left, right = 0, len(nums) - 1\n"
+            "\n"
+            "        while left < right:\n"
+            "            mid = (left + right) // 2\n"
+            "\n"
+            "            if nums[mid] < nums[right]:\n"
+            "                # Metade direita está ordenada -> mínimo está em [left, mid]\n"
+            "                right = mid\n"
+            "            else:\n"
+            "                # Ponto de inflexão está na metade esquerda -> mínimo em [mid+1, right]\n"
+            "                left = mid + 1\n"
+            "\n"
+            "        return nums[left]"
+        ),
+        "reasoning_script": (
+            "\"Embora uma busca linear encontrasse o mínimo em O(N), a restrição pede "
+            "eficiência em O(log N), o que me direciona imediatamente para a Busca "
+            "Binária modificada. Em um array ordenado e rotacionado, se cortarmos o "
+            "array ao meio, uma das metades estará sempre perfeitamente ordenada, "
+            "enquanto a outra conterá o ponto de inflexão da rotação. Vou comparar o "
+            "elemento do meio (mid) com o elemento da extrema direita (right). Se "
+            "nums[mid] < nums[right], sei que a metade direita está ordenada e o mínimo "
+            "está na metade esquerda (incluindo o mid). Caso contrário, o mínimo está na "
+            "metade direita. Dessa forma, descarto metade dos dados a cada iteração, "
+            "alcançando a complexidade O(log N).\""
+        ),
+        "explanation": (
+            "Se `nums[mid] < nums[right]`, o mínimo não pode estar à direita de `mid` "
+            "(essa metade já está ordenada e crescente), então movemos `right = mid`. "
+            "Caso contrário, o ponto de rotação está entre `mid` e `right`, então "
+            "movemos `left = mid + 1`. O loop termina quando `left == right`, apontando "
+            "para o menor elemento."
+        ),
+        "why_concept": (
+            "Mesmo com a rotação 'quebrando' a ordenação global, uma das metades "
+            "permanece localmente ordenada em qualquer divisão ao meio — essa invariante "
+            "é o que permite aplicar busca binária e manter O(log N)."
+        ),
+        "big_o": "O(log N) tempo, O(1) espaço.",
+    },
+]
+

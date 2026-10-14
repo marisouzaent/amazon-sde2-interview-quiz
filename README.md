@@ -1,5 +1,7 @@
 # 🧠 Amazon SDE-II Interview Quiz
 
+> Criado e mantido por [@marisouzaent](https://github.com/marisouzaent).
+
 Aplicativo web interativo, feito com [Streamlit](https://streamlit.io/), para praticar
 entrevistas técnicas de **Software Development Engineer II (SDE-II)**, com foco nos
 tópicos de algoritmos e estruturas de dados mais cobrados em processos seletivos
@@ -88,4 +90,16 @@ amazon-sde2-interview-quiz/
 ## 🤝 Contribuindo
 
 Sugestões de novas perguntas, correções ou melhorias são bem-vindas! Sinta-se
-à vontade para abrir uma *issue* ou enviar um *pull request*.
+à vontade para abrir uma *issue* ou enviar um *pull request*. Todas as contribuições
+serão revisadas e aprovadas pelo mantenedor do projeto antes de serem incorporadas.
+
+## ✍️ Autoria
+
+Este projeto foi idealizado e desenvolvido por **[@marisouzaent](https://github.com/marisouzaent)**.
+O histórico de commits do repositório preserva a autoria original de cada contribuição.
+
+## 📄 Licença
+
+Distribuído sob a licença [MIT](LICENSE) — você pode usar, estudar e adaptar o
+código, mas a autoria original deve ser mantida (ver aviso de copyright no arquivo
+`LICENSE`).

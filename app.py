@@ -14,7 +14,7 @@ Para executar localmente:
 
 import streamlit as st
 
-from questions_data import MODULES
+from questions_data import MODULES, PRACTICAL_EXAMPLES
 
 # ----------------------------------------------------------------------------
 # Configuração da página
@@ -131,6 +131,7 @@ def render_sidebar() -> str:
     nav_options = {"🏠 Início": "home"}
     for key, mod in MODULES.items():
         nav_options[f'{mod["icon"]} {mod["title"].split(" ", 1)[1]}'] = key
+    nav_options["🛠️ Exemplos Práticos"] = "practical_examples"
 
     labels = list(nav_options.keys())
     default_label = labels[0]
@@ -264,6 +265,89 @@ def render_module(module_key: str) -> None:
 
 
 # ----------------------------------------------------------------------------
+# Página de Exemplos Práticos Detalhados
+# ----------------------------------------------------------------------------
+def render_practical_examples() -> None:
+    st.markdown(
+        """
+        <div class="main-header">
+            <h1>🛠️ Exemplos Práticos Detalhados</h1>
+            <p>Problema, esqueleto de código e solução explicada — pratique o raciocínio antes de ver a resposta</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    st.markdown(
+        """
+        Estes problemas clássicos e cenários de entrevista cobrem os pilares fundamentais
+        exigidos pela Amazon (Hash Tables, Stacks, Listas Encadeadas, Árvores/BST,
+        Grafos/BFS-DFS e Busca Binária). Para cada exemplo:
+
+        1. Leia o enunciado/contexto, as perguntas de esclarecimento (quando houver) e o
+           esqueleto de código;
+        2. Escreva seu próprio raciocínio no campo de texto (não é avaliado, é só para te
+           ajudar a pensar antes de ver a resposta) — tente verbalizar como se estivesse
+           respondendo a um entrevistador;
+        3. Quando estiver pronto, clique em **"Mostrar solução e explicação"** para ver o
+           código resolvido, o script de raciocínio em 1ª pessoa e a análise de Big O.
+        """
+    )
+
+    for example in PRACTICAL_EXAMPLES:
+        with st.container():
+            st.markdown('<div class="question-card">', unsafe_allow_html=True)
+
+            st.markdown(f"### {example['pillar']} — *{example['title']}*")
+            st.markdown(f"**Enunciado e Contexto:** {example['context']}")
+
+            clarifying_questions = example.get("clarifying_questions")
+            if clarifying_questions:
+                st.markdown("**❓ Perguntas de Esclarecimento (faça antes de codar):**")
+                for q in clarifying_questions:
+                    st.markdown(f"- _{q}_")
+
+            st.markdown("**Código para ser montado/adaptado (Esqueleto):**")
+            st.code(example["skeleton_code"], language="python")
+
+            st.markdown(f"💭 **Antes de ver a solução:** {example['reasoning_prompt']}")
+            st.text_area(
+                "Escreva aqui seu raciocínio ou tentativa de código:",
+                key=f"reasoning_{example['id']}",
+                height=120,
+            )
+
+            reveal_key = f"reveal_{example['id']}"
+            if reveal_key not in st.session_state:
+                st.session_state[reveal_key] = False
+
+            if not st.session_state[reveal_key]:
+                if st.button("🔎 Mostrar solução e explicação", key=f"btn_{example['id']}"):
+                    st.session_state[reveal_key] = True
+                    st.rerun()
+            else:
+                st.markdown("**Código Resolvido e Explicado:**")
+                st.code(example["solution_code"], language="python")
+
+                reasoning_script = example.get("reasoning_script")
+                if reasoning_script:
+                    st.markdown("**🎙️ Linha de Raciocínio (como falar com o entrevistador):**")
+                    st.markdown(f"> {reasoning_script}")
+
+                st.info(f"**Explicação:** {example['explanation']}")
+                st.success(f"**Por que usar este conceito?** {example['why_concept']}")
+                st.markdown(
+                    f'<div class="big-o-note">📐 <b>Complexidade (Big O):</b> {example["big_o"]}</div>',
+                    unsafe_allow_html=True,
+                )
+                if st.button("🙈 Ocultar solução", key=f"hide_{example['id']}"):
+                    st.session_state[reveal_key] = False
+                    st.rerun()
+
+            st.markdown("</div>", unsafe_allow_html=True)
+
+
+# ----------------------------------------------------------------------------
 # Página inicial
 # ----------------------------------------------------------------------------
 def render_home() -> None:
@@ -331,6 +415,8 @@ def main() -> None:
 
     if selected_module == "home":
         render_home()
+    elif selected_module == "practical_examples":
+        render_practical_examples()
     else:
         render_module(selected_module)
 
